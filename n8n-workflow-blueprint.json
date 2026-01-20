@@ -1,0 +1,451 @@
+{
+  "name": "Ai Receipt Expert",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMonth"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1xVOe0UwiHf8fVyYL75vPY0L9u459FeKN",
+          "mode": "list",
+          "cachedResultName": "Receipts",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1xVOe0UwiHf8fVyYL75vPY0L9u459FeKN"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        32
+      ],
+      "id": "9f044410-d950-4ca0-89f5-5de78d4d8875",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NYMr99i4fn9yIc3T",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        112,
+        -256
+      ],
+      "id": "b77beed0-3147-45ba-920f-cc01a2d9067e",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NYMr99i4fn9yIc3T",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vision.googleapis.com/v1/images:annotate",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyBX6_uYCT75yMiEwpmbymDwRVH0Fsq41Xg"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "=json",
+        "specifyBody": "json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={{$json}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        496,
+        48
+      ],
+      "id": "467c7081-1165-4c8e-9fc5-dac8a442ce0d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read binary file from filesystem (filesystem-v2 mode)\nconst buffer = await this.helpers.getBinaryDataBuffer(0, 'data');\n\n// Convert to base64 for Google Vision\nconst base64Image = buffer.toString('base64');\n\nreturn [\n  {\n    json: {\n      requests: [\n        {\n          image: {\n            content: base64Image\n          },\n          features: [\n            { type: 'TEXT_DETECTION' }\n          ]\n        }\n      ]\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -256
+      ],
+      "id": "b0561387-34f1-4587-914a-a1e2fd3334ea",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a receipt data extractor.\nAnalyze the text provided.\nReturn ONLY a raw JSON object with these fields:\n{\n  \"Date\": \"YYYY/MM/DD\" (give in date format so that google sheet can recognise it as date),\n  \"Product\": \"Short summary of the main items (Translate to English if possible)\",\n  \"Vendor\": \"Store Name\",\n  \"Category\": \"Analyze the items and choose one: Groceries, Transport, Entertainment, Shopping, Services, Eating Out, Rent, Tax, Mobile Package, Installments, Education, Travel, or Other\",\n  \"Amount\": \"0.00 (Convert German comma decimals to dots, e.g. '1,99' becomes '1.99', if it has EUR at the start remove it and provide only numbers with decimal)\",\n  \"Currency\": \"EUR\",\n  \"Source\": \"Payment method (e.g. Card/Karte or Cash/Bar)\",\n  \"Notes\": \"Any extra details, If date was missing, write 'MISSING DATE' here.\",\n\"Total Amount\": \"0.00(Convert German comma decimals to dots, e.g. '1,99' becomes '1.99' and mention here the total amount of the receipt)\"\n}\nRules:\n1. If no date is found, use \"2025-01-01\".\n2. Do NOT use markdown (no ```json)."
+            },
+            {
+              "content": "={{ $json.responses[0].textAnnotations[0].description }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        736,
+        48
+      ],
+      "id": "046160d2-babe-4b7e-8a6c-aaf1e1f0a6dd",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "12xg9fQoLNw3w9so",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93dc11d7-8f2d-4893-b8e7-9dd32510b01c",
+              "name": "parsed",
+              "value": "={{ JSON.parse($json.output[0].content[0].text) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1088,
+        48
+      ],
+      "id": "622dbffd-55a8-47c0-8489-f91c11428bb9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Download file').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "16arhpF_YTuSvpnSSRRyKY4xdRuHTnkhd",
+          "mode": "list",
+          "cachedResultName": "Processed Receipts",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/16arhpF_YTuSvpnSSRRyKY4xdRuHTnkhd"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1536,
+        -256
+      ],
+      "id": "cea6b516-790c-4635-af81-c9f586be78ec",
+      "name": "Move file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NYMr99i4fn9yIc3T",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1951FpiuqRA3LzN0X6tCrxMYSyEBod3Gxjo-JQWLIWso",
+          "mode": "list",
+          "cachedResultName": "Personal Expenses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1951FpiuqRA3LzN0X6tCrxMYSyEBod3Gxjo-JQWLIWso/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1951FpiuqRA3LzN0X6tCrxMYSyEBod3Gxjo-JQWLIWso/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.parsed.Date}}",
+            "Vendor": "={{ $json.parsed.Vendor }}",
+            "Category": "={{ $json.parsed.Category }}",
+            "Amount": "={{ $json.parsed.Amount }}",
+            "Currency": "={{ $json.parsed.Currency }}",
+            "Source": "={{ $json.parsed.Source }}",
+            "Notes": "={{ $json.parsed.Notes }}",
+            "Product": "={{ $json.parsed.Product }}"
+          },
+          "matchingColumns": [
+            "Product"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Vendor",
+              "displayName": "Vendor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "json_data",
+              "displayName": "json_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        -256
+      ],
+      "id": "7be3c40d-633c-4ff5-948c-7539179d97c9",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GY6uhuwCuSm848Li",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Move file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Europe/Berlin",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "2aac5942-578e-47ff-80e9-1fe1d2b6113a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "81a13cad01dd71e9ff9b6c307343166f1281387a177f0bd9274071a91d630668"
+  },
+  "id": "qYCk3Qr0b51BUYM94WqOo",
+  "tags": []
+}
