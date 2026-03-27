@@ -73,7 +73,7 @@ Both versions connect to **Google Looker Studio** to provide a real-time visuali
 ---
 
 ## 📬 Contact
-**[Your Name]**
+**Saad U Ahmed Khan**
 *Expert in AI Automation, API Integration, and Financial Operations.*
 
-[Link to your LinkedIn]
+[[https://shorturl.at/ourBN]]
