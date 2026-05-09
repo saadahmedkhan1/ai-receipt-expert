@@ -1617,7 +1617,7 @@
                 "file": "{{11.id}}",
                 "move": "drive",
                 "select": "file",
-                "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_PATH/16arhpF_YTuSvpnSSRRyKY4xdRuHTnkhd",
+                "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_PATH/YOUR_PROCESSED_FOLDER_ID",
                 "destination": "drive"
             },
             "metadata": {
