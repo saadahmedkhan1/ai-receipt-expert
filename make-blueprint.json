@@ -8,7 +8,7 @@
             "parameters": {
                 "limit": 5,
                 "select": "modify",
-                "folderId": "/16P5JS4Hol-SY2iu1hJiCH8CWm08bSI72/1xVOe0UwiHf8fVyYL75vPY0L9u459FeKN",
+                "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_PATH",
                 "mimeType": "all",
                 "__IMTCONN__": 7040389,
                 "destination": "drive"
@@ -38,7 +38,7 @@
                                 "scoped": "true",
                                 "connection": "google-restricted"
                             },
-                            "label": "My Google Restricted connection (me.saadahmedkhan@gmail.com)"
+                            "label": "My Google Restricted connection (your-email@example.com)"
                         },
                         "destination": {
                             "label": "My Drive"
@@ -151,7 +151,7 @@
                                 "scoped": "true",
                                 "connection": "google-restricted"
                             },
-                            "label": "My Google Restricted connection (me.saadahmedkhan@gmail.com)"
+                            "label": "My Google Restricted connection (your-email@example.com)"
                         }
                     }
                 },
@@ -1177,7 +1177,7 @@
                     "7": "{{17.Notes}}"
                 },
                 "sheetId": "Sheet1",
-                "spreadsheetId": "/16P5JS4Hol-SY2iu1hJiCH8CWm08bSI72/1951FpiuqRA3LzN0X6tCrxMYSyEBod3Gxjo-JQWLIWso",
+                "spreadsheetId": "YOUR_GOOGLE_SHEET_PATH",
                 "includesHeaders": true,
                 "insertDataOption": "INSERT_ROWS",
                 "valueInputOption": "USER_ENTERED",
@@ -1370,7 +1370,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "My Google connection (me.saadahmedkhan@gmail.com)"
+                            "label": "My Google connection (your-email@example.com)"
                         }
                     }
                 },
@@ -1617,7 +1617,7 @@
                 "file": "{{11.id}}",
                 "move": "drive",
                 "select": "file",
-                "folderId": "/16P5JS4Hol-SY2iu1hJiCH8CWm08bSI72/1xVOe0UwiHf8fVyYL75vPY0L9u459FeKN/16arhpF_YTuSvpnSSRRyKY4xdRuHTnkhd",
+                "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_PATH/16arhpF_YTuSvpnSSRRyKY4xdRuHTnkhd",
                 "destination": "drive"
             },
             "metadata": {
@@ -1655,7 +1655,7 @@
                                 "scoped": "true",
                                 "connection": "google-restricted"
                             },
-                            "label": "My Google Restricted connection (me.saadahmedkhan@gmail.com)"
+                            "label": "My Google Restricted connection (your-email@example.com)"
                         }
                     }
                 },
