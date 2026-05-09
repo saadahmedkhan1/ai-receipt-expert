@@ -13,10 +13,10 @@
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
-          "value": "1xVOe0UwiHf8fVyYL75vPY0L9u459FeKN",
+          "value": "YOUR_GOOGLE_DRIVE_FOLDER_ID",
           "mode": "list",
           "cachedResultName": "Receipts",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/1xVOe0UwiHf8fVyYL75vPY0L9u459FeKN"
+          "cachedResultUrl": "https://drive.google.com/drive/folders/YOUR_GOOGLE_DRIVE_FOLDER_ID"
         },
         "event": "fileCreated",
         "options": {}
@@ -193,10 +193,10 @@
         },
         "folderId": {
           "__rl": true,
-          "value": "16arhpF_YTuSvpnSSRRyKY4xdRuHTnkhd",
+          "value": "YOUR_PROCESSED_FOLDER_ID",
           "mode": "list",
           "cachedResultName": "Processed Receipts",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/16arhpF_YTuSvpnSSRRyKY4xdRuHTnkhd"
+          "cachedResultUrl": "https://drive.google.com/drive/folders/YOUR_PROCESSED_FOLDER_ID"
         }
       },
       "type": "n8n-nodes-base.googleDrive",
@@ -219,17 +219,17 @@
         "operation": "appendOrUpdate",
         "documentId": {
           "__rl": true,
-          "value": "1951FpiuqRA3LzN0X6tCrxMYSyEBod3Gxjo-JQWLIWso",
+          "value": "YOUR_GOOGLE_SHEET_ID",
           "mode": "list",
           "cachedResultName": "Personal Expenses",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1951FpiuqRA3LzN0X6tCrxMYSyEBod3Gxjo-JQWLIWso/edit?usp=drivesdk"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1951FpiuqRA3LzN0X6tCrxMYSyEBod3Gxjo-JQWLIWso/edit#gid=0"
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
